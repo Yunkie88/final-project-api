@@ -18,8 +18,7 @@ var userstatus = router.route ('/profile/userstatus');
 var orderstatus = router.route ('/order/editStatus');
 var order = router.route ('/order');
 var product = router.route ('/products');
-var Product = require ('../model/products.js');
-
+var Category = require ('../model/products.js');
 
 
 
@@ -224,3 +223,13 @@ router.route('/login')
 router.route ('/').get (authController.isAuthenticated, function(req,res){
     res.json({message:"Succesfully Authenticated"})
 })
+
+
+
+router.post('/category/:id/products',function(req, res) {
+Category.find(req.params.id, function(err, category) {
+if (err)
+res.send(err);
+res.json(category.products);
+});
+});

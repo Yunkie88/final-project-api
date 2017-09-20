@@ -1,5 +1,6 @@
 var passport = require('passport');
-var User = require('../app/models/user');
+var User = require('../app/models/puffclients.js');
+var jwt = require ('jwt-simple');
 var config = require('./auth');
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;

@@ -14,6 +14,7 @@ var CateogrySchema = new Schema ({
 	category_id: Number,
 	category_name: String,
 	category_picurl:String,
+	products: [productSchema],
 	createdAt : {type: Date, default: Date.now}
 })
 
