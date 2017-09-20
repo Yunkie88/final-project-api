@@ -9,7 +9,7 @@ var mongo = require ('./controller/puff.js');
 
 app.use('/api',mongo);
 
-app.listen (8080);
+app.listen (process.env.PORT||8080);
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://admin:admin123@ds133084.mlab.com:33084/puff')
