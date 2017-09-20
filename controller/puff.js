@@ -56,12 +56,7 @@ router.post('/profile/:id',function(req, res) {
 User.findById({login_id:req.params.id}, function(err, user) {
 if (err)
 res.send(err);
-user.login_id = req.body.login_id;
 user.password = req.body.password;
-user.company_name = req.body.company_name;
-user.brn_no = req.body.brn_no;
-user.owner_name = req.body.owner_name;
-user.owner_ic = req.body.owner_ic;
 user.address = req.body.address;
 user.ctc_no = req.body.ctc_no;
 user.alt_ctc = req.body.alt_ctc;
@@ -199,3 +194,33 @@ res.json({ message: 'Successfully deleted' });
 });
 });
 
+
+
+
+router.route('/login')
+.post(function(req,res){
+        if(!req.body.username||
+        !req.body.password){
+        res.status(400);
+        res.json({errors: "Bad request"});
+    } else{
+        User.findOne({username:req.body.username},function(err,user){
+            if (err) throw err;
+            user.verifyPassword(req.body.password,function(err,isMatch){
+                if(err) throw err;
+                console.log('Password',isMatch);
+                if (isMatch){
+                    res.json({message:"Successful login"})
+                }
+
+                else{
+                	res.json ({message:"Login Failed"})
+                }
+            })
+        })
+    }
+});
+
+router.route ('/').get (authController.isAuthenticated, function(req,res){
+    res.json({message:"Succesfully Authenticated"})
+})
