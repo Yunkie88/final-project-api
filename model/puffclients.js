@@ -20,10 +20,9 @@ address: String,
 email: String,
 ctc_no: String,
 alt_ctc: String,
-createdAt : {type: Date, default: Date.now},}
-{
-    timestamps: true
+createdAt : {type: Date, default: Date.now}
 });
+
 
 ClientSchema.pre('save', function(next){
  

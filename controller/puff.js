@@ -9,18 +9,20 @@ res.json({ message: 'Hooray! Thank you for your business!' });
 module.exports = router;
 
 //Orders
-var Order = require('../model/orders.js');
+
 var history = router.route('/order/history');
 
 var User = require('../model/puffclients.js');
 var profile = router.route('/profile');
 var userstatus = router.route ('/profile/userstatus');
+var userController = require('./user.js');
+
+var Order = require('../model/orders.js');
 var orderstatus = router.route ('/order/editStatus');
 var order = router.route ('/order');
-var product = router.route ('/products');
+
+var category= router.route('/category')
 var Category = require ('../model/products.js');
-
-
 
 history.get(function(req, res) {
 Order.find({login_id:req.params.login_id}, function(err, order) {
@@ -127,109 +129,140 @@ res.json({ message: 'Status updated!' });
 });
 });
 
-//product
-product.get (function (req,res){
-Product.find(function(err, products) {
+//category
+category.get (function (req,res){
+Category.find(function(err, categories) {
 if (err)
 res.send(err);
-res.json(products);
+res.json(categories);
 });
 });
 
-product.post(function(req, res) {
-var product = new Product();
-product.product_id = req.body.product_id;
-product.product_category = req.body.product_category;
-product.product_picurl = req.body.product_picurl;
-product.product_name = req.body.product_name;
-product.product_description = req.body.product_description;
-product.product_price = req.body.product_price;
-product.product_status = req.body.product_status;
-// save the product
-product.save(function(err) {
+category.post(function(req, res) {
+var category = new Category();
+category.category_id = req.body.category_id;
+category.category_name = req.body.category_name;
+category.category_picurl = req.body.category_picurl;
+category.category_description = req.body.category_description;
+category.products= req.body.products;
+// save the category
+category.save(function(err) {
 if (err)
 res.send(err);
-res.json({ message: 'Product created!' });
+res.json({ message: 'Category created!' });
 });
 });
 
-router.get('/products/:id',function(req, res) {
-Product.find(req.params.id, function(err, product) {
+router.get('/category/:id',function(req, res) {
+Category.find(req.params.id, function(err, category) {
 if (err)
 res.send(err);
-res.json(product);
+res.json(category);
 });
 });
 
-router.post('/products/:id',function(req,res){
-Product.findById(req.params.id,function(err,product){
+router.post('/category/:id',function(req,res){
+Category.findById(req.params.id,function(err,category){
 if (err)
 res.send(err);
-product.product_id = req.body.product_id;
-product.product_category = req.body.product_category;
-product.product_picurl = req.body.product_picurl;
-product.product_name = req.body.product_name;
-product.product_description = req.body.product_description;
-product.product_price = req.body.product_price;
-product.product_status = req.body.product_status;
-//save the product
-product.save(function(err) {
+category.category_name = req.body.category_name;
+category.category_description = req.body.category_description;
+category.category_picurl = req.body.category_picurl;
+category.products = req.body.products;
+//save the category
+category.save(function(err) {
 if (err)
 res.send(err);
-res.json({ message: 'Product updated!' });
+res.json({ message: 'Category updated!' });
 });
 });
 });
 
 
-router.route ('/products/:id')
+// router.route ('/products/:id')
+// .delete(function(req, res) {
+// Product.remove({
+// _id: req.params.id
+// }, function(err, product) {
+// if (err)
+// res.send(err);
+// res.json({ message: 'Successfully deleted' });
+// });
+// });
+
+
+
+
+// router.route('/login')
+// .post(function(req,res){
+//         if(!req.body.username||
+//         !req.body.password){
+//         res.status(400);
+//         res.json({errors: "Bad request"});
+//     } else{
+//         User.findOne({username:req.body.username},function(err,user){
+//             if (err) throw err;
+//             user.verifyPassword(req.body.password,function(err,isMatch){
+//                 if(err) throw err;
+//                 console.log('Password',isMatch);
+//                 if (isMatch){
+//                     res.json({message:"Successful login"})
+//                 }
+
+//                 else{
+//                 	res.json ({message:"Login Failed"})
+//                 }
+//             })
+//         })
+//     }
+// });
+
+// router.route ('/').get (authController.isAuthenticated, function(req,res){
+//     res.json({message:"Succesfully Authenticated"})
+// })
+
+
+router.route('/login')
+.post(userController.getUserToken)
+
+//products
+router.post('/category/:category_id/products', function(req,res){
+Category.findById(req.params.category_id, function(err, category) {
+	 if (err){
+	 	 res.send(err);
+	 }
+
+	 else {
+	 	var newProduct = {
+	 		product_id: req.body.product_id,
+			product_picurl: req.body.product_picurl,
+			product_name: req.body.product_name,
+			product_description: req.body.product_description,
+			product_price: req.body.product_price,
+			product_status: req.body.product_status
+	 	}
+	 	category.products.push(newProduct)
+	 	category.save(function(err) {
+		if (err){
+			res.send(err);
+		}
+		else {
+			res.json({ message: 'Categorized Products added!!' });
+		}
+	 
+ });
+}
+});
+});
+
+
+router.route ('/category/:id/products/:id')
 .delete(function(req, res) {
-Product.remove({
-_id: req.params.id
+Category.remove({
+_id: req.params.category_id.product_id
 }, function(err, product) {
 if (err)
 res.send(err);
 res.json({ message: 'Successfully deleted' });
-});
-});
-
-
-
-
-router.route('/login')
-.post(function(req,res){
-        if(!req.body.username||
-        !req.body.password){
-        res.status(400);
-        res.json({errors: "Bad request"});
-    } else{
-        User.findOne({username:req.body.username},function(err,user){
-            if (err) throw err;
-            user.verifyPassword(req.body.password,function(err,isMatch){
-                if(err) throw err;
-                console.log('Password',isMatch);
-                if (isMatch){
-                    res.json({message:"Successful login"})
-                }
-
-                else{
-                	res.json ({message:"Login Failed"})
-                }
-            })
-        })
-    }
-});
-
-router.route ('/').get (authController.isAuthenticated, function(req,res){
-    res.json({message:"Succesfully Authenticated"})
-})
-
-
-
-router.post('/category/:id/products',function(req, res) {
-Category.find(req.params.id, function(err, category) {
-if (err)
-res.send(err);
-res.json(category.products);
 });
 });
