@@ -21,7 +21,7 @@ var Order = require('../model/orders.js');
 var orderstatus = router.route ('/order/editStatus');
 var order = router.route ('/order');
 
-var category= router.route('/category')
+var pcategory= router.route('/category')
 var Category = require ('../model/products.js');
 
 history.get(function(req, res) {
@@ -130,7 +130,7 @@ res.json({ message: 'Status updated!' });
 });
 
 //category
-category.get (function (req,res){
+pcategory.get (function (req,res){
 Category.find(function(err, categories) {
 if (err)
 res.send(err);
@@ -138,7 +138,7 @@ res.json(categories);
 });
 });
 
-category.post(function(req, res) {
+pcategory.post(function(req, res) {
 var category = new Category();
 category.category_id = req.body.category_id;
 category.category_name = req.body.category_name;
@@ -226,43 +226,43 @@ router.route('/login')
 .post(userController.getUserToken)
 
 //products
-router.post('/category/:category_id/products', function(req,res){
-Category.findById(req.params.category_id, function(err, category) {
-	 if (err){
-	 	 res.send(err);
-	 }
+// router.post('/category/:category_id/products', function(req,res){
+// Category.findById(req.params.category_id, function(err, category) {
+// 	 if (err){
+// 	 	 res.send(err);
+// 	 }
 
-	 else {
-	 	var newProduct = {
-	 		product_id: req.body.product_id,
-			product_picurl: req.body.product_picurl,
-			product_name: req.body.product_name,
-			product_description: req.body.product_description,
-			product_price: req.body.product_price,
-			product_status: req.body.product_status
-	 	}
-	 	category.products.push(newProduct)
-	 	category.save(function(err) {
-		if (err){
-			res.send(err);
-		}
-		else {
-			res.json({ message: 'Categorized Products added!!' });
-		}
+// 	 else {
+// 	 	var newProduct = {
+// 	 		product_id: req.body.product_id,
+// 			product_picurl: req.body.product_picurl,
+// 			product_name: req.body.product_name,
+// 			product_description: req.body.product_description,
+// 			product_price: req.body.product_price,
+// 			product_status: req.body.product_status
+// 	 	}
+// 	 	category.products.push(newProduct)
+// 	 	category.save(function(err) {
+// 		if (err){
+// 			res.send(err);
+// 		}
+// 		else {
+// 			res.json({ message: 'Categorized Products added!!' });
+// 		}
 	 
- });
-}
-});
-});
+//  });
+// }
+// });
+// });
 
 
-router.route ('/category/:id/products/:id')
-.delete(function(req, res) {
-Category.remove({
-_id: req.params.category_id.product_id
-}, function(err, product) {
-if (err)
-res.send(err);
-res.json({ message: 'Successfully deleted' });
-});
-});
+// router.route ('/category/:id/products/:id')
+// .delete(function(req, res) {
+// Category.remove({
+// _id: req.params.category_id.product_id
+// }, function(err, product) {
+// if (err)
+// res.send(err);
+// res.json({ message: 'Successfully deleted' });
+// });
+// });
